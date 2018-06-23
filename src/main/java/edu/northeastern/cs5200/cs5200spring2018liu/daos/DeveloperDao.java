@@ -230,6 +230,7 @@ public class DeveloperDao {
 
     private static String DELETE_DEVELOPER = "DELETE FROM person WHERE person.id=?";
 
+    @SuppressWarnings("Duplicates")
     public int deleteDeveloper(int developerId) {
         Connection connection = null;
         int res = -1;

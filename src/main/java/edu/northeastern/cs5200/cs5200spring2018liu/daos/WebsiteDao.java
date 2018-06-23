@@ -1,11 +1,12 @@
 package edu.northeastern.cs5200.cs5200spring2018liu.daos;
 
+import edu.northeastern.cs5200.cs5200spring2018liu.models.Page;
 import edu.northeastern.cs5200.cs5200spring2018liu.models.Website;
 import edu.northeastern.cs5200.cs5200spring2018liu.utils.ConnectDB;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Collection;
+import java.util.LinkedList;
 
 public class WebsiteDao {
 
@@ -16,6 +17,8 @@ public class WebsiteDao {
         if (instance == null) instance = new WebsiteDao();
         return instance;
     }
+
+    private PageDao pageDao = PageDao.getInstance();
 
     private static String CREATE_WEBSITE = "INSERT INTO website (id, name, description, created, updated, visits, developer) VALUES (?, ?, ?, ?, ?, ?, ?)";
     /**
@@ -52,211 +55,68 @@ public class WebsiteDao {
 
         return res;
     }
-//
-//    private static String FIND_ALL_WEBSITES = "SELECT * FROM website";
-//    /**
-//     *
-//     * @return Website collection
-//     */
-//    public Collection<Website> findAllWebsites() {
-//        Connection connection = null;
-//        Collection<Website> websites = new ArrayList<>();
-//        try {
-//            connection = ConnectDB.getConnection();
-//            Statement statement = connection.createStatement();
-//            ResultSet results = statement.executeQuery(FIND_ALL_WEBSITES);
-//            while(results.next()) {
-//                websites.add(readWebsite(results));
-//            }
-//        } catch (ClassNotFoundException | SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return websites;
-//    }
-//
-//    private static String FIND_Website_BY_ID = "SELECT * FROM Website, person WHERE Website.id=person.id AND person.id=?";
-//    /**
-//     *
-//     * @param WebsiteId
-//     * @return Website (null if not found)
-//     */
-//    public Website findWebsiteById(int WebsiteId) {
-//        Connection connection = null;
-//        Website Website = null;
-//        try {
-//            connection = getConnection();
-//            PreparedStatement statement = connection.prepareStatement(FIND_Website_BY_ID);
-//            statement.setInt(1, WebsiteId);
-//            ResultSet results = statement.executeQuery();
-//            if (results.next()) {
-//                Website = readWebsite(results);
-//            }
-//        } catch (ClassNotFoundException | SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return Website;
-//    }
-//
-//    private static String FIND_Website_BY_USERNAME = "SELECT * FROM Website, person WHERE Website.id=person.id and person.userName=?";
-//
-//    /**
-//     *
-//     * @param username
-//     * @return
-//     */
-//    public Website findWebsiteByUsername(String username) {
-//        Connection connection = null;
-//        Website Website = null;
-//        try {
-//            connection = getConnection();
-//            PreparedStatement statement = connection.prepareStatement(FIND_Website_BY_USERNAME);
-//            statement.setString(1, username);
-//            ResultSet results = statement.executeQuery();
-//            if (results.next()) {
-//                Website = readWebsite(results);
-//            }
-//        } catch (ClassNotFoundException | SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return Website;
-//    }
-//
-//    private static String FIND_Website_BY_CREDENTIALS = "SELECT * FROM Website, person WHERE Website.id=person.id AND person.userName=? AND person.password=?";
-//    /**
-//     *
-//     * @param username
-//     * @param password
-//     * @return Website
-//     */
-//    public Website findWebsiteByCredentials(String username, String password) {
-//        Connection connection = null;
-//        Website Website = null;
-//        try {
-//            connection = getConnection();
-//            PreparedStatement statement = connection.prepareStatement(FIND_Website_BY_CREDENTIALS);
-//            statement.setString(1, username);
-//            statement.setString(2, password);
-//            ResultSet results = statement.executeQuery();
-//            if (results.next()) {
-//                Website = readWebsite(results);
-//            }
-//        } catch (ClassNotFoundException | SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return Website;
-//    }
-//
-//    private static String UPDATE_Website = "UPDATE Website, person SET person.id=?, firstName=?, lastName=?, userName=?, password=?, email=?, dob=?, WebsiteKey=? WHERE Website.id=person.id AND person.id=?";
-//
-//    /**
-//     *
-//     * @param WebsiteId
-//     * @param Website
-//     * @return Website's id
-//     */
-//    public int updateWebsite(int WebsiteId, Website Website) {
-//        Connection connection = null;
-//        int res = -1;
-//        try {
-//            connection = getConnection();
-//            PreparedStatement statement = connection.prepareStatement(UPDATE_Website);
-//            statement.setInt(1, Website.getId());
-//            statement.setString(2, Website.getFirstName());
-//            statement.setString(3, Website.getLastName());
-//            statement.setString(4, Website.getUsername());
-//            statement.setString(5, Website.getPassword());
-//            statement.setString(6, Website.getEmail());
-//            statement.setDate(7, Website.getDob());
-//            statement.setString(8, Website.getWebsiteKey());
-//            statement.setInt(9, WebsiteId);
-//            res = statement.executeUpdate();
-//        } catch (ClassNotFoundException | SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return res;
-//    }
-//
-//    private static String DELETE_Website = "DELETE FROM person WHERE person.id=?";
-//
-//    public int deleteWebsite(int WebsiteId) {
-//        Connection connection = null;
-//        int res = -1;
-//        try {
-//            connection = getConnection();
-//            PreparedStatement statement = connection.prepareStatement(DELETE_Website);
-//            statement.setInt(1, WebsiteId);
-//            res = statement.executeUpdate();
-//        } catch (ClassNotFoundException | SQLException e) {
-//            e.printStackTrace();
-//        } finally {
-//            try {
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        return res;
-//    }
-//
-//    private Website readWebsite(ResultSet results) throws SQLException {
-//        int id = results.getInt("id");
-//        String name = results.getString("name");
-//        String description = results.getString("description");
-//        Date created = results.getDate("created");
-//        Date updated = results.getDate("updated");
-//        int visits = results.getInt("visits");
-//
-//
-//        String developerKey = results.getString("developerKey");
-//
-//        return new Website(id, name, description, created, updated, visits, pages);
-//    }
+
+    private static final String FIND_ALL_WEBSITES = "SELECT * FROM website";
+
+    public Collection<Website> findAllWebsites() {
+        Collection<Website> websites = new LinkedList<>();
+        try (Connection conn = ConnectDB.getConnection()) {
+            Statement statement = conn.createStatement();
+            ResultSet results = statement.executeQuery(FIND_ALL_WEBSITES);
+
+            while (results.next())
+                websites.add(readWebsite(results));
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return websites;
+    }
+
+    private static final String FIND_WEBSITES_FOR_DEVELOPER = "SELECT * FROM website WHERE developerId=?";
+
+    public Collection<Website> findWebsitesForDeveloper(int developerId) {
+        Collection<Website> websites = new LinkedList<>();
+        try (Connection conn = ConnectDB.getConnection()) {
+            PreparedStatement statement = conn.prepareStatement(FIND_WEBSITES_FOR_DEVELOPER);
+            statement.setInt(1, developerId);
+            ResultSet results = statement.executeQuery();
+
+            while (results.next())
+                websites.add(readWebsite(results));
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return websites;
+    }
+
+    public Website findWebsiteById(int websiteId) {
+        // TODO
+        return null;
+    }
+
+    public int updateWebsite(int websiteId, Website website) {
+        // TODO
+        return -1;
+    }
+
+    public int deleteWebsite(int websiteId) {
+        // TODO
+        return -1;
+    }
+
+    private Website readWebsite(ResultSet results) throws SQLException {
+        int id = results.getInt("id");
+        String name = results.getString("name");
+        String description = results.getString("description");
+        Date created = results.getDate("created");
+        Date updated = results.getDate("updated");
+        int visits = results.getInt("visits");
+        int developerId = results.getInt("developer");
+
+        Collection<Page> pages = pageDao.findPagesForWebsite(id);
+
+        return new Website(id, name, description, created, updated, visits, pages, developerId);
+    }
 }
