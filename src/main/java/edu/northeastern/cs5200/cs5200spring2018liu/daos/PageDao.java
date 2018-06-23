@@ -26,7 +26,7 @@ public class PageDao {
     private static String CREATE_PAGE = "INSERT INTO page (id, title, description, created, updated, views, website) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     /**
-     *
+     * create page and its widgets, if already exist, then do nothing.
      * @param websiteId
      * @param page
      * @return -1: error, 0: duplicate
@@ -101,6 +101,12 @@ public class PageDao {
 
     private static final String UPDATE_PAGE = "UPDATE `page` SET id=?, title=?, description=?, created=?, updated=?, views=?, website=? WHERE id=?";
 
+    /**
+     * update page but NOT its widgets
+     * @param pageId
+     * @param page
+     * @return
+     */
     public int updatePage(int pageId, Page page) {
         int res = -1;
 
@@ -117,6 +123,8 @@ public class PageDao {
     }
 
     private static final String DELETE_PAGE = "DELETE FROM `page` WHERE id=?";
+
+    @SuppressWarnings("Duplicates")
     public int deletePage(int pageId) {
         int res = -1;
 

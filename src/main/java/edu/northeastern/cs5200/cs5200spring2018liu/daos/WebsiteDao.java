@@ -22,25 +22,21 @@ public class WebsiteDao {
 
     private static String CREATE_WEBSITE = "INSERT INTO website (id, name, description, created, updated, visits, developer) VALUES (?, ?, ?, ?, ?, ?, ?)";
     /**
-     *
+     * create website and its page, if exists then do nothing
      * @param website
      * @return executeUpdate
      */
     public int createWebsiteForDeveloper(int developerId, Website website) {
         Connection connection = null;
+        website.setDeveloperId(developerId);
         int res = -1;
         try {
             connection = ConnectDB.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE_WEBSITE);
-            statement.setInt(1, website.getId());
-            statement.setString(2, website.getName());
-            statement.setString(3, website.getDescription());
-            statement.setDate(4, website.getCreated());
-            statement.setDate(5, website.getUpdated());
-            statement.setInt(6, website.getVisits());
-            statement.setInt(7, developerId);
+            setWebiste(statement, website);
             res = statement.executeUpdate();
 
+            website.getPages().forEach(page -> pageDao.createPageForWebsite(website.getId(), page));
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         } finally {
@@ -73,7 +69,7 @@ public class WebsiteDao {
         return websites;
     }
 
-    private static final String FIND_WEBSITES_FOR_DEVELOPER = "SELECT * FROM website WHERE developerId=?";
+    private static final String FIND_WEBSITES_FOR_DEVELOPER = "SELECT * FROM website WHERE developer=?";
 
     public Collection<Website> findWebsitesForDeveloper(int developerId) {
         Collection<Website> websites = new LinkedList<>();
@@ -91,19 +87,62 @@ public class WebsiteDao {
         return websites;
     }
 
+    private static final String FIND_WEBSITE_BY_ID = "SELECT * FROM website WHERE id=?";
+
     public Website findWebsiteById(int websiteId) {
-        // TODO
-        return null;
+        Website website = null;
+        try (Connection conn = ConnectDB.getConnection()) {
+            PreparedStatement statement = conn.prepareStatement(FIND_WEBSITE_BY_ID);
+            statement.setInt(1, websiteId);
+            ResultSet results = statement.executeQuery();
+
+            if (results.next())
+                website = readWebsite(results);
+
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return website;
     }
 
+    private static final String UPDATE_WEBSITE = "UPDATE website SET id=?, name=?, description=?, created=?, updated=?, visits=?, developer=? WHERE id=?";
+
+    /**
+     * update websites but NOT its pages
+     * @param websiteId
+     * @param website
+     * @return
+     */
     public int updateWebsite(int websiteId, Website website) {
-        // TODO
-        return -1;
+        int res = -1;
+
+        try (Connection conn = ConnectDB.getConnection()) {
+            PreparedStatement statement = conn.prepareStatement(UPDATE_WEBSITE);
+            int pos = setWebiste(statement, website);
+            statement.setInt(pos, websiteId);
+            res = statement.executeUpdate();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return res;
     }
 
+    private static final String DELETE_WEBSITE = "DELETE FROM website WHERE id=?";
+
+    @SuppressWarnings("Duplicates")
     public int deleteWebsite(int websiteId) {
-        // TODO
-        return -1;
+        int res = -1;
+
+        try (Connection conn = ConnectDB.getConnection()) {
+            PreparedStatement statement = conn.prepareStatement(DELETE_WEBSITE);
+            statement.setInt(1, websiteId);
+            res = statement.executeUpdate();
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return res;
     }
 
     private Website readWebsite(ResultSet results) throws SQLException {
@@ -118,5 +157,19 @@ public class WebsiteDao {
         Collection<Page> pages = pageDao.findPagesForWebsite(id);
 
         return new Website(id, name, description, created, updated, visits, pages, developerId);
+    }
+
+    private int setWebiste(PreparedStatement statement, Website website) throws SQLException {
+        int pos = 0;
+
+        statement.setInt(++pos, website.getId());
+        statement.setString(++pos, website.getName());
+        statement.setString(++pos, website.getDescription());
+        statement.setDate(++pos, website.getCreated());
+        statement.setDate(++pos, website.getUpdated());
+        statement.setInt(++pos, website.getVisits());
+        statement.setInt(++pos, website.getDeveloperId());
+
+        return pos+1;
     }
 }
