@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 public class WidgetDaoTest {
     private WidgetDao widgetDao;
 
-    Widget headingWidget = new HeadingWidget(6, "headingWidget",
+    Widget headingWidget = new HeadingWidget(45, "headingWidget",
             12, 32, "btn", "color: yellow",
             "headline", 3, 123, 5);
 
@@ -33,9 +33,6 @@ public class WidgetDaoTest {
     public void S1_createWidgetForPage() throws Exception {
         int res = widgetDao.createWidgetForPage(123, headingWidget);
         assertNotEquals(-1, res);
-
-        res = widgetDao.createWidgetForPage(123, headingWidget);
-        System.out.println(res);
     }
 
     @Test

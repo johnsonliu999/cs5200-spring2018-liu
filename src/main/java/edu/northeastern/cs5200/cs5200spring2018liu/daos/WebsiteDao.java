@@ -161,8 +161,10 @@ public class WebsiteDao {
 
     private int setWebiste(PreparedStatement statement, Website website) throws SQLException {
         int pos = 0;
-
-        statement.setInt(++pos, website.getId());
+        if (website.getId() == 0)
+            statement.setNull(++pos, Types.INTEGER);
+        else
+            statement.setInt(++pos, website.getId());
         statement.setString(++pos, website.getName());
         statement.setString(++pos, website.getDescription());
         statement.setDate(++pos, website.getCreated());

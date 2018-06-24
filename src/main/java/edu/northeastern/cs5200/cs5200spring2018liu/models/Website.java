@@ -2,6 +2,7 @@ package edu.northeastern.cs5200.cs5200spring2018liu.models;
 
 import java.util.Collection;
 import java.sql.Date;
+import java.util.LinkedList;
 
 public class Website {
     private int id;
@@ -20,7 +21,8 @@ public class Website {
         this.created = created;
         this.updated = updated;
         this.visits = visits;
-        this.pages = pages;
+        if (pages == null) this.pages = new LinkedList<>();
+        else this.pages = pages;
         this.developerId = developerId;
     }
 

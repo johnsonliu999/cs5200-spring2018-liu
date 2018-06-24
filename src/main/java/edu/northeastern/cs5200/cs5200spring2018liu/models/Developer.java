@@ -2,6 +2,7 @@ package edu.northeastern.cs5200.cs5200spring2018liu.models;
 
 import java.util.Collection;
 import java.sql.Date;
+import java.util.LinkedList;
 
 public class Developer extends Person {
     private String developerKey;
@@ -10,7 +11,8 @@ public class Developer extends Person {
     public Developer(int id, String firstName, String lastName, String username, String password, String email, Date dob, Collection<Phone> phones, Collection<Address> addresses, String developerKey, Collection<Website> websites) {
         super(id, firstName, lastName, username, password, email, dob, phones, addresses);
         this.developerKey = developerKey;
-        this.websites = websites;
+        if (websites == null) this.websites = new LinkedList<>();
+        else this.websites = websites;
     }
 
     public String getDeveloperKey() {

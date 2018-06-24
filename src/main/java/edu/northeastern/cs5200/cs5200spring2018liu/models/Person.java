@@ -2,6 +2,7 @@ package edu.northeastern.cs5200.cs5200spring2018liu.models;
 
 import java.sql.Date;
 import java.util.Collection;
+import java.util.LinkedList;
 
 abstract public class Person {
     private int id;
@@ -22,8 +23,12 @@ abstract public class Person {
         this.password = password;
         this.email = email;
         this.dob = dob;
-        this.phones = phones;
-        this.addresses = addresses;
+
+        if (phones == null) this.phones = new LinkedList<>();
+        else this.phones = phones;
+
+        if (addresses == null) this.addresses = new LinkedList<>();
+        else this.addresses = addresses;
     }
 
     public int getId() {

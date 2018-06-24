@@ -31,7 +31,10 @@ public class DeveloperDao {
         try {
             connection = ConnectDB.getConnection();
             PreparedStatement statement = connection.prepareStatement(CREATE_PERSON);
-            statement.setInt(1, developer.getId());
+            if (developer.getId() != 0)
+                statement.setInt(1, developer.getId());
+            else
+                statement.setNull(1, Types.INTEGER);
             statement.setString(2, developer.getFirstName());
             statement.setString(3, developer.getLastName());
             statement.setString(4, developer.getUsername());
@@ -193,7 +196,7 @@ public class DeveloperDao {
 
     /**
      *
-     * @param developerId
+     * @param developerId can't be 0
      * @param developer
      * @return developer's id
      */

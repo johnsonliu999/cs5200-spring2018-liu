@@ -44,7 +44,6 @@ public class WidgetDao {
             PreparedStatement statement = prepareCreateWidget(conn, widget);
             setWidget(statement, widget);
 
-            System.out.println(statement);
             res = statement.executeUpdate();
 
         } catch (ClassNotFoundException | SQLException e) {
@@ -245,8 +244,10 @@ public class WidgetDao {
      */
     private int setWidget(PreparedStatement statement, Widget widget) throws SQLException {
         int pos = 0;
-
-        statement.setInt(++pos, widget.getPageId());
+        if (widget.getId() == 0)
+            statement.setNull(++pos, Types.INTEGER);
+        else
+            statement.setInt(++pos, widget.getPageId());
         statement.setInt(++pos, widget.getId());
         statement.setString(++pos, widget.getName());
         statement.setInt(++pos, widget.getWidth());

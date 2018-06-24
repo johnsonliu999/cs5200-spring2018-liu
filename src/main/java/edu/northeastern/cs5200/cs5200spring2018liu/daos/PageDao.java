@@ -6,9 +6,7 @@ import edu.northeastern.cs5200.cs5200spring2018liu.models.Widget;
 import edu.northeastern.cs5200.cs5200spring2018liu.utils.ConnectDB;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.sql.Date;
 import java.util.LinkedList;
 
 public class PageDao {
@@ -142,7 +140,10 @@ public class PageDao {
 
     private int setPage(PreparedStatement statement, Page page) throws SQLException {
         int pos = 0;
-        statement.setInt(++pos, page.getId());
+        if (page.getId() == 0)
+            statement.setNull(++pos, Types.INTEGER);
+        else
+            statement.setInt(++pos, page.getId());
         statement.setString(++pos, page.getTitle());
         statement.setString(++pos, page.getDescription());
         statement.setDate(++pos, page.getCreated());

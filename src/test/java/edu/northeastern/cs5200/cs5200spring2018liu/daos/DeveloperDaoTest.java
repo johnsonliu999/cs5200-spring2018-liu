@@ -17,8 +17,8 @@ public class DeveloperDaoTest {
 
     private DeveloperDao developerDao;
     private Developer john = new Developer(
-            4, "john", "smith", "john",
-            "johnjohn", "john@john.com", new Date(System.currentTimeMillis()),
+            57, "john", "smith", "john",
+            "johnjohn", "john@john.com", null,
             null, null, "John Key", null);
 
     @Before
