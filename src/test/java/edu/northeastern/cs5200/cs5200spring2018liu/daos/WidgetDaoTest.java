@@ -18,7 +18,7 @@ public class WidgetDaoTest {
 
     Widget headingWidget = new HeadingWidget(45, "headingWidget",
             12, 32, "btn", "color: yellow",
-            "headline", 3, 123, 5);
+            "headline", 3, 123, 0);
 
     @Before
     public void setUp() throws Exception {
@@ -56,6 +56,6 @@ public class WidgetDaoTest {
     @Test
     public void S4_deleteWidget() throws Exception {
         int res = widgetDao.deleteWidget(headingWidget.getId());
-        assertNotEquals(-1, res);
+        assertEquals(1, res);
     }
 }
